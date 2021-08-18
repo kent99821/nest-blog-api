@@ -1,8 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ModelType } from '@typegoose/typegoose/lib/types';
 import { IsNotEmpty } from 'class-validator';
-import { PostModel } from './post.model';
-
+import { InjectModel } from 'nestjs-typegoose';
+import {Post as PostSchema} from './post.model'
 
 class CreatePostDto {
     @ApiProperty({description:'帖子标题',example:"帖子标题"})
@@ -15,17 +16,22 @@ class CreatePostDto {
 @ApiTags('帖子')
 @Controller('posts')
 export class PostsController {
+    // 使用模型
+    constructor(
+        @InjectModel(PostSchema) private readonly PostModel:ModelType<PostSchema>
+    )
+    {}
     // 显示列表
     @Get()
     @ApiOperation({ summary: "显示帖子列表" })
    async index() {
-        return await PostModel.find();
+        return await this.PostModel.find();
     }
     // 创建帖子
     @Post()
     @ApiOperation({ summary: "创建帖子" })
     async create(@Body() createPostDto:CreatePostDto) { //参数装饰器
-        await PostModel.create(createPostDto)
+        await this.PostModel.create(createPostDto)
         return {
             success: true
         }
@@ -34,13 +40,13 @@ export class PostsController {
     @Get(':id')
     @ApiOperation({summary:"帖子详情"})
     async detail(@Param('id') id:string) {
-        return  await PostModel.findById(id);
+        return  await this.PostModel.findById(id);
     }
     // 编辑帖子
     @Put(':id')
     @ApiOperation({summary:"编辑帖子"})
     async update(@Param('id') id:string, @Body() updatePostDto:CreatePostDto){
-        await PostModel.findByIdAndUpdate(id,updatePostDto)
+        await this.PostModel.findByIdAndUpdate(id,updatePostDto)
         return {
             success:true,
             id:id,
@@ -52,7 +58,7 @@ export class PostsController {
     @Delete(':id')
     @ApiOperation({summary:"删除帖子"})
     async remove(@Param('id') id:string){
-        await PostModel.findByIdAndDelete(id)
+        await this.PostModel.findByIdAndDelete(id)
         return {
             success:true,
             id:id
