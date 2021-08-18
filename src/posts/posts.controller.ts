@@ -1,11 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { PostModel } from './post.model';
 
 
 class CreatePostDto {
-    @ApiProperty({description:'帖子标题'})
+    @ApiProperty({description:'帖子标题',example:"帖子标题"})
     title:string
-    @ApiProperty({description:'帖子内容'})
+    @ApiProperty({description:'帖子内容',example:"帖子内容"})
     content:string
 }
 @ApiTags('帖子')
@@ -13,40 +14,38 @@ class CreatePostDto {
 export class PostsController {
     @Get()
     @ApiOperation({ summary: "显示帖子列表" })
-    index() {
-        return [1, 2, 3]
+   async index() {
+        return await PostModel.find();
     }
 
     @Post()
     @ApiOperation({ summary: "创建帖子" })
-    create(@Body() body:CreatePostDto) { //参数装饰器
-        body
+    async create(@Body() createPostDto:CreatePostDto) { //参数装饰器
+        await PostModel.create(createPostDto)
         return {
             success: true
         }
     }
     @Get(':id')
     @ApiOperation({summary:"帖子详情"})
-    detail(@Param('id') id:string) {
-        return {
-            id: id,
-            title: 'aaaqa'
-        }
+    async detail(@Param('id') id:string) {
+        return  await PostModel.findById(id);
     }
     @Put(':id')
     @ApiOperation({summary:"编辑帖子"})
-    update(@Param('id') id:string, @Body() body:CreatePostDto){
-
+    async update(@Param('id') id:string, @Body() updatePostDto:CreatePostDto){
+        await PostModel.findByIdAndUpdate(id,updatePostDto)
         return {
             success:true,
             id:id,
-            title:body.title,
-            content:body.content
+            title:updatePostDto.title,
+            content:updatePostDto.content
         }
     }
     @Delete(':id')
     @ApiOperation({summary:"删除帖子"})
-    remove(@Param('id') id:string){
+    async remove(@Param('id') id:string){
+        await PostModel.findByIdAndDelete(id)
         return {
             success:true,
             id:id
