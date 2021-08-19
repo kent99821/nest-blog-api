@@ -6,14 +6,14 @@ import { InjectModel } from 'nestjs-typegoose';
 import {Post as PostSchema} from './post.model'
 
 class CreatePostDto {
-    @ApiProperty({description:'帖子标题',example:"帖子标题"})
+    @ApiProperty({description:'文章标题',example:"文章标题"})
     // 管道限制 不为空
     @IsNotEmpty({message:'请填写标题'})
     title:string
-    @ApiProperty({description:'帖子内容',example:"帖子内容"})
+    @ApiProperty({description:'文章内容',example:"文章内容"})
     content:string
 }
-@ApiTags('帖子')
+@ApiTags('文章')
 @Controller('posts')
 export class PostsController {
     // 使用模型
@@ -23,13 +23,13 @@ export class PostsController {
     {}
     // 显示列表
     @Get()
-    @ApiOperation({ summary: "显示帖子列表" })
+    @ApiOperation({ summary: "显示文章列表" })
    async index() {
         return await this.PostModel.find();
     }
-    // 创建帖子
+    // 创建文章
     @Post()
-    @ApiOperation({ summary: "创建帖子" })
+    @ApiOperation({ summary: "创建文章" })
     async create(@Body() createPostDto:CreatePostDto) { //参数装饰器
         await this.PostModel.create(createPostDto)
         return {
@@ -38,13 +38,13 @@ export class PostsController {
     }
     // 查看详细
     @Get(':id')
-    @ApiOperation({summary:"帖子详情"})
+    @ApiOperation({summary:"文章详情"})
     async detail(@Param('id') id:string) {
         return  await this.PostModel.findById(id);
     }
-    // 编辑帖子
+    // 编辑文章
     @Put(':id')
-    @ApiOperation({summary:"编辑帖子"})
+    @ApiOperation({summary:"编辑文章"})
     async update(@Param('id') id:string, @Body() updatePostDto:CreatePostDto){
         await this.PostModel.findByIdAndUpdate(id,updatePostDto)
         return {
@@ -54,9 +54,9 @@ export class PostsController {
             content:updatePostDto.content
         }
     }
-    // 删除帖子
+    // 删除文章
     @Delete(':id')
-    @ApiOperation({summary:"删除帖子"})
+    @ApiOperation({summary:"删除文章"})
     async remove(@Param('id') id:string){
         await this.PostModel.findByIdAndDelete(id)
         return {

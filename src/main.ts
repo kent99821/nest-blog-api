@@ -10,7 +10,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe())
 
   const config = new DocumentBuilder()
-    .setTitle('Nest博客API')
+    .setTitle('Nest 文章API')
     .setDescription('我的第一个nest项目')
     .setVersion('1.0')
     .build();
